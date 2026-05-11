@@ -43,8 +43,8 @@ export default function RegisterPage() {
   async function onSubmit(values: FormValues) {
     try {
       await registerUser(values);
-      toast.success("Conta criada com sucesso!");
-      router.push("/dashboard");
+      toast.success("Conta criada com sucesso! Faça login para continuar.");
+      router.push("/login");
     } catch (error) {
       toast.error(getApiErrorMessage(error, "Não foi possível criar a conta."));
     }

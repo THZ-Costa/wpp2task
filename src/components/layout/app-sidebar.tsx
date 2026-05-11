@@ -18,6 +18,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 
+import { SidebarUser } from "@/components/layout/sidebar-user";
 import { cn } from "@/lib/utils";
 
 type NavigationItem = {
@@ -109,6 +110,10 @@ export function SidebarContent() {
           </div>
         ))}
       </nav>
+
+      <div className="border-t p-3">
+        <SidebarUser />
+      </div>
     </div>
   );
 }

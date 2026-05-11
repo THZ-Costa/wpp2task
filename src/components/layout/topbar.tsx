@@ -4,10 +4,8 @@ import { Bell, Menu, Moon, Search, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-import { getInitials, mockCurrentUser } from "@/lib/auth";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { CompanySwitcher } from "@/components/layout/company-switcher";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -70,11 +68,6 @@ export function Topbar() {
         >
           {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
         </Button>
-
-        <Avatar className="size-8 border">
-          <AvatarImage src={mockCurrentUser.avatarUrl} alt={mockCurrentUser.name} />
-          <AvatarFallback>{getInitials(mockCurrentUser.name)}</AvatarFallback>
-        </Avatar>
       </div>
     </header>
   );

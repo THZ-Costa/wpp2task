@@ -32,16 +32,13 @@ export async function login(payload: LoginPayload): Promise<AuthSession> {
   return session;
 }
 
-export async function register(payload: RegisterPayload): Promise<AuthSession> {
-  const { data } = await api.post<ApiResponse<AuthApiPayload>>("/auth/register", {
+export async function register(payload: RegisterPayload): Promise<void> {
+  await api.post<ApiResponse<AuthApiPayload>>("/auth/register", {
     name: payload.name,
     email: payload.email,
     password: payload.password,
     password_confirmation: payload.passwordConfirmation,
   });
-  const session = toSession(data.data);
-  setAuthToken(session.token);
-  return session;
 }
 
 export async function logout(): Promise<void> {
