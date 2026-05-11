@@ -1,4 +1,3 @@
-import type { Company } from "@/types/company";
 import type { User } from "@/types/user";
 
 export type LoginPayload = {
@@ -10,12 +9,28 @@ export type LoginPayload = {
 export type RegisterPayload = {
   name: string;
   email: string;
-  companyName: string;
   password: string;
   passwordConfirmation: string;
 };
 
-export type AuthenticatedUser = {
+export type ForgotPasswordPayload = {
+  email: string;
+};
+
+export type ResetPasswordPayload = {
+  token: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
+};
+
+export type AuthSession = {
   user: User;
-  companies: Company[];
+  token: string;
+};
+
+export type ApiResponse<T> = {
+  success: boolean;
+  message: string;
+  data: T;
 };

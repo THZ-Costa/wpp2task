@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { SummaryCard } from "@/components/summaries/summary-card";
-import { TopicFrequencyList } from "@/components/summaries/topic-frequency-list";
+import { SummariesByGroup } from "@/components/summaries/summaries-by-group";
 import {
   getConversationSummaries,
   getTopicFrequencies,
@@ -16,16 +15,9 @@ export default async function SummariesPage() {
     <>
       <PageHeader
         title="Resumos"
-        description="Batches consolidados pela IA com tópicos e sinais de demanda em cada grupo."
+        description="Selecione um grupo na lateral para ver os batches consolidados pela IA com tópicos e sinais de demanda."
       />
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="space-y-4">
-          {summaries.map((summary) => (
-            <SummaryCard key={summary.id} summary={summary} />
-          ))}
-        </div>
-        <TopicFrequencyList topics={topics} />
-      </div>
+      <SummariesByGroup summaries={summaries} topics={topics} />
     </>
   );
 }

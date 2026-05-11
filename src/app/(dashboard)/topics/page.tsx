@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { TopicFrequencyList } from "@/components/summaries/topic-frequency-list";
+import { TopicsRankingTable } from "@/components/topics/topics-ranking-table";
 import { getTopicFrequencies } from "@/services/summary-service";
 
 export default async function TopicsPage() {
@@ -9,9 +9,9 @@ export default async function TopicsPage() {
     <>
       <PageHeader
         title="Tópicos"
-        description="Tópicos mais recorrentes extraídos das conversas monitoradas."
+        description="Ranking dos tópicos mais frequentes — clique em um tópico para ver tendência, mensagens fonte e tópicos relacionados."
       />
-      <TopicFrequencyList topics={topics} />
+      <TopicsRankingTable topics={topics} />
     </>
   );
 }

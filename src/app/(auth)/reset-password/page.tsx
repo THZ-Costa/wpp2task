@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -13,12 +14,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getApiErrorMessage } from "@/lib/api-errors";
-import { register as registerUser } from "@/services/auth-service";
+import { resetPassword } from "@/services/auth-service";
 
 const schema = z
   .object({
-    name: z.string().min(2, "Informe seu nome"),
-    email: z.string().email("Informe um email válido"),
     password: z.string().min(8, "A senha precisa ter ao menos 8 caracteres"),
     passwordConfirmation: z.string().min(1, "Confirme sua senha"),
   })
@@ -29,54 +28,60 @@ const schema = z
 
 type FormValues = z.infer<typeof schema>;
 
-export default function RegisterPage() {
+function ResetPasswordForm() {
   const router = useRouter();
+  const params = useSearchParams();
+  const token = params.get("token") ?? "";
+  const email = params.get("email") ?? "";
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", password: "", passwordConfirmation: "" },
+    defaultValues: { password: "", passwordConfirmation: "" },
   });
+
+  const missingParams = !token || !email;
 
   async function onSubmit(values: FormValues) {
     try {
-      await registerUser(values);
-      toast.success("Conta criada com sucesso!");
-      router.push("/dashboard");
+      await resetPassword({
+        token,
+        email,
+        password: values.password,
+        passwordConfirmation: values.passwordConfirmation,
+      });
+      toast.success("Senha redefinida com sucesso. Faça login.");
+      router.push("/login");
     } catch (error) {
-      toast.error(getApiErrorMessage(error, "Não foi possível criar a conta."));
+      toast.error(getApiErrorMessage(error, "Não foi possível redefinir a senha."));
     }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-10">
-      <Card className="w-full max-w-md rounded-lg">
-        <CardHeader className="text-center">
-          <div className="mx-auto flex size-10 items-center justify-center rounded-lg bg-emerald-500 text-white">
-            <MessageSquare className="size-5" />
-          </div>
-          <CardTitle className="text-xl">Criar conta</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <Card className="w-full max-w-sm rounded-lg">
+      <CardHeader>
+        <CardTitle className="text-xl">Redefinir senha</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {missingParams ? (
+          <p className="text-sm text-muted-foreground">
+            Link inválido. Solicite uma nova recuperação em{" "}
+            <Link href="/forgot-password" className="font-medium text-foreground">
+              Esqueci minha senha
+            </Link>
+            .
+          </p>
+        ) : (
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="space-y-1.5">
-              <Label htmlFor="name">Nome</Label>
-              <Input id="name" autoComplete="name" {...register("name")} />
-              {errors.name && (
-                <p className="text-xs text-destructive">{errors.name.message}</p>
-              )}
+              <Label>Email</Label>
+              <Input value={email} disabled readOnly />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" autoComplete="email" {...register("email")} />
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">Nova senha</Label>
               <Input
                 id="password"
                 type="password"
@@ -88,7 +93,7 @@ export default function RegisterPage() {
               )}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="passwordConfirmation">Confirmar senha</Label>
+              <Label htmlFor="passwordConfirmation">Confirmar nova senha</Label>
               <Input
                 id="passwordConfirmation"
                 type="password"
@@ -101,17 +106,26 @@ export default function RegisterPage() {
             </div>
             <Button className="w-full" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" />}
-              Cadastrar
+              Redefinir senha
             </Button>
           </form>
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            Já tem conta?{" "}
-            <Link href="/login" className="font-medium text-foreground">
-              Entrar
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+        )}
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          <Link href="/login" className="font-medium text-foreground">
+            Voltar para login
+          </Link>
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-10">
+      <Suspense fallback={<Card className="w-full max-w-sm rounded-lg"><CardContent className="p-6">Carregando…</CardContent></Card>}>
+        <ResetPasswordForm />
+      </Suspense>
     </main>
   );
 }

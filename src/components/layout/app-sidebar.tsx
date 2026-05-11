@@ -13,7 +13,6 @@ import {
   Plug,
   Shield,
   Smartphone,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -44,8 +43,7 @@ const navigationGroups: Array<{
   {
     title: "Integrações",
     items: [
-      { title: "Números", href: "/whatsapp/numbers", icon: Smartphone },
-      { title: "Grupos", href: "/whatsapp/groups", icon: Users },
+      { title: "WhatsApp", href: "/whatsapp/numbers", icon: Smartphone },
       { title: "Jira", href: "/jira", icon: Plug },
       { title: "Billing", href: "/billing", icon: CreditCard },
     ],
